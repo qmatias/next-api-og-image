@@ -41,10 +41,10 @@
     "lib"
   ],
   "peerDependencies": {
+    "chrome-aws-lambda": ">=1.6.3",
     "next": ">=9.0.0",
     "react": ">=16.0.0",
-    "react-dom": ">=16.0.0",
-    "chrome-aws-lambda": ">=1.6.3"
+    "react-dom": ">=16.0.0"
   },
   "prettier": {
     "printWidth": 110,
@@ -67,7 +67,9 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "chrome-aws-lambda": "^10.1.0",
     "deepmerge": "^4.2.2",
+    "next": "^12.2.0",
     "puppeteer-core": "^10.4.0",
     "twemoji": "^13.1.0"
   }
