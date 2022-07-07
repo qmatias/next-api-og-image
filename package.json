@@ -6,7 +6,8 @@
     "prepublishOnly": "npm run build",
     "prebuild": "rimraf lib",
     "build": "microbundle",
-    "build:watch": "microbundle watch"
+    "build:watch": "microbundle watch",
+    "prepare": "npm run build"
   },
   "author": {
     "name": "Igor Klepacki",
