@@ -29,8 +29,8 @@ export type NextApiOgImageConfig<
 > = {
   template: RequireExactlyOne<
     Partial<{
-      html: (params: StrategyAwareParams<Strategy, StrategyDetails>) => string | Promise<string>
-      react: (params: StrategyAwareParams<Strategy, StrategyDetails>) => ReactElement | Promise<ReactElement>
+      html: (params: StrategyAwareParams<Strategy, StrategyDetails>, request: NextApiRequest) => string | Promise<string>
+      react: (params: StrategyAwareParams<Strategy, StrategyDetails>, request: NextApiRequest) => ReactElement | Promise<ReactElement>
     }>,
     'html' | 'react'
   >
@@ -65,7 +65,7 @@ export function withOGImage<
     type: 'png',
     quality: 90,
     dev: {
-      inspectHtml: true,
+      inspectHtml: false,
       errorsInResponse: true,
     },
   }
@@ -107,14 +107,14 @@ export function withOGImage<
 
     const html =
       htmlTemplate && !reactTemplate
-        ? await htmlTemplate({ ...params } as StrategyAwareParams<Strategy, StrategyDetails>)
+        ? await htmlTemplate({ ...params } as StrategyAwareParams<Strategy, StrategyDetails>, request)
         : renderToStaticMarkup(
-            await reactTemplate({ ...params } as StrategyAwareParams<Strategy, StrategyDetails>),
+            await reactTemplate({ ...params } as StrategyAwareParams<Strategy, StrategyDetails>, request),
           )
 
     response.setHeader(
       'Content-Type',
-      !isProductionLikeMode(envMode) && inspectHtml ? 'text/html' : type ? `image/${type}` : 'image/png',
+      inspectHtml ? 'text/html' : type ? `image/${type}` : 'image/png',
     )
     response.setHeader('Cache-Control', cacheControl)
 
@@ -254,8 +254,7 @@ function createImageFactory({
       ...browserEnvironment,
       createImage: async function (html: string) {
         await page.setContent(html)
-        const file =
-          !isProductionLikeMode(envMode) && inspectHtml
+        const file = inspectHtml
             ? await page.content()
             : await page.screenshot({ type, encoding: 'binary', ...(type === 'jpeg' ? { quality } : null) })
         return file
